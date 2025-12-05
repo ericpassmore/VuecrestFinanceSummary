@@ -1,0 +1,344 @@
+:root {
+  color-scheme: light;
+  --bg: #0f172a;
+  --panel: #0b1223;
+  --card: #111a31;
+  --accent: #48c1a7;
+  --accent-2: #7bc6ff;
+  --muted: #8ea4c0;
+  --text: #e7eefc;
+  --border: rgba(255, 255, 255, 0.06);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  --radius: 12px;
+  --font: "DM Sans", "Segoe UI", "Inter", -apple-system, system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font);
+  background: radial-gradient(circle at 20% 20%, rgba(72, 193, 167, 0.12), transparent 25%),
+    radial-gradient(circle at 80% 0%, rgba(123, 198, 255, 0.12), transparent 20%),
+    linear-gradient(135deg, #0a1222 0%, #0a1120 50%, #050915 100%);
+  color: var(--text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 36px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px 18px;
+  align-items: center;
+}
+
+.brand .dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 16px rgba(72, 193, 167, 0.7);
+}
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.lede {
+  margin-top: 6px;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pill,
+button.ghost {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+button.ghost {
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+button.ghost:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: calc(100vh - 120px);
+}
+
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 18px 14px 24px;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 10px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+  box-shadow: 0 0 0 6px rgba(142, 164, 192, 0.12);
+}
+
+.status-dot.idle {
+  background: var(--muted);
+}
+
+.status-dot.busy {
+  background: #f6c452;
+  box-shadow: 0 0 0 8px rgba(246, 196, 82, 0.14);
+}
+
+.status-dot.ready {
+  background: var(--accent);
+  box-shadow: 0 0 0 8px rgba(72, 193, 167, 0.18);
+}
+
+.month-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px;
+  overflow-y: auto;
+  max-height: calc(100vh - 190px);
+}
+
+.month-card {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.month-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(72, 193, 167, 0.4);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+}
+
+.month-card.active {
+  border-color: rgba(72, 193, 167, 0.6);
+  background: linear-gradient(145deg, rgba(72, 193, 167, 0.08), rgba(123, 198, 255, 0.06));
+}
+
+.month-title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+
+.summary-chip {
+  color: #1dd8b7;
+  border-color: rgba(29, 216, 183, 0.5);
+}
+
+.income-chip {
+  color: #7bc6ff;
+  border-color: rgba(123, 198, 255, 0.5);
+}
+
+.balance-chip {
+  color: #c6a5ff;
+  border-color: rgba(198, 165, 255, 0.5);
+}
+
+.content {
+  padding: 24px 28px 40px;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: var(--shadow);
+  gap: 10px;
+}
+
+.links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.link {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-decoration: none;
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(72, 193, 167, 0.16), rgba(123, 198, 255, 0.12));
+  font-weight: 600;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.summary-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  padding: 24px 20px;
+}
+
+.summary h2,
+.summary h3,
+.summary h4 {
+  margin: 26px 0 14px;
+}
+
+.summary h2:first-child,
+.summary h3:first-child {
+  margin-top: 0;
+}
+
+.summary p {
+  line-height: 1.6;
+  color: #d5dff3;
+}
+
+.summary ul {
+  padding-left: 20px;
+  color: #d5dff3;
+  line-height: 1.45;
+}
+
+.summary li + li {
+  margin-top: 3px;
+}
+
+.summary code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 5px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.summary hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0;
+}
+
+.placeholder {
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 0;
+  font-weight: 600;
+}
+
+.noscript {
+  margin: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #2e1b1b;
+  color: #ffd7d7;
+  font-weight: 700;
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .month-list {
+    max-height: unset;
+  }
+
+  .info-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

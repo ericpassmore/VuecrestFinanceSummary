@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vuecrest Financial Reports</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="brand">
+        <div class="dot"></div>
+        <div>
+          <p class="eyebrow">Vuecrest HOA</p>
+          <h1>Financial Reports</h1>
+          <p class="lede">Browse monthly summaries, balance sheets, and income statements.</p>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="pill">Data source: data/</span>
+        <button id="reloadButton" class="ghost">Reload</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div>
+            <p class="eyebrow">Months</p>
+            <h2>Reports</h2>
+          </div>
+          <div id="statusDot" class="status-dot idle" title="Idle"></div>
+        </div>
+        <div id="monthList" class="month-list" role="navigation" aria-label="Available reports"></div>
+      </aside>
+
+      <section class="content">
+        <div class="info-bar" id="infoBar">
+          <div>
+            <p class="eyebrow">Selected</p>
+            <h3 id="selectedLabel">No report selected</h3>
+          </div>
+          <div class="links" id="statementLinks"></div>
+        </div>
+
+        <article id="summaryPanel" class="summary-panel">
+          <div id="summaryContent" class="summary"></div>
+        </article>
+      </section>
+    </main>
+
+    <template id="monthItemTemplate">
+      <button class="month-card" type="button">
+        <div class="month-title"></div>
+        <div class="meta">
+          <span class="chip summary-chip" title="Summary available">Summary</span>
+          <span class="chip income-chip" title="Income statement available">Income</span>
+          <span class="chip balance-chip" title="Balance sheet available">Balance</span>
+        </div>
+      </button>
+    </template>
+
+    <noscript>
+      <div class="noscript">Please enable JavaScript to browse reports.</div>
+    </noscript>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
