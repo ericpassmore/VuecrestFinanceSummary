@@ -16,6 +16,7 @@ const monthNames = [
 ];
 
 const dom = {
+  navButtons: document.querySelectorAll("[data-view]"),
   monthList: document.getElementById("monthList"),
   summaryContent: document.getElementById("summaryContent"),
   infoBar: document.getElementById("infoBar"),
@@ -24,10 +25,19 @@ const dom = {
   monthItemTemplate: document.getElementById("monthItemTemplate"),
   reloadButton: document.getElementById("reloadButton"),
   statusDot: document.getElementById("statusDot"),
+  reportView: document.getElementById("reportView"),
+  legalView: document.getElementById("legalView"),
+  legalForm: document.getElementById("legalForm"),
+  legalYear: document.getElementById("legalYear"),
+  legalMonth: document.getElementById("legalMonth"),
+  legalActive: document.getElementById("legalActive"),
+  closedLitigations: document.getElementById("closedLitigations"),
+  legalStatus: document.getElementById("legalStatus"),
 };
 
 let months = [];
 let activeKey = null;
+let activeView = "reports";
 
 function setStatus(state) {
   dom.statusDot.classList.remove("idle", "busy", "ready");
@@ -271,6 +281,108 @@ function markdownToHtml(md) {
   return html || '<div class="placeholder">Summary is empty.</div>';
 }
 
+function showView(targetView) {
+  activeView = targetView;
+  const views = {
+    reports: dom.reportView,
+    legal: dom.legalView,
+  };
+
+  Object.entries(views).forEach(([key, el]) => {
+    if (!el) return;
+    el.classList.toggle("hidden", key !== targetView);
+  });
+
+  dom.navButtons.forEach((btn) => {
+    const isActive = btn.dataset.view === targetView;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
+function initNavigation() {
+  dom.navButtons.forEach((btn) =>
+    btn.addEventListener("click", () => showView(btn.dataset.view))
+  );
+}
+
+function populateSelect(select, values) {
+  if (!select) return;
+  select.innerHTML = "";
+  values.forEach(({ value, label }) => {
+    const opt = document.createElement("option");
+    opt.value = String(value);
+    opt.textContent = label;
+    select.appendChild(opt);
+  });
+}
+
+function seedLegalForm() {
+  if (!dom.legalForm) return;
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  populateSelect(dom.legalYear, [
+    { value: currentYear, label: String(currentYear) },
+    { value: currentYear + 1, label: String(currentYear + 1) },
+  ]);
+
+  populateSelect(
+    dom.legalMonth,
+    Array.from({ length: 12 }, (_, i) => {
+      const month = i + 1;
+      return { value: month, label: month.toString().padStart(2, "0") };
+    })
+  );
+  dom.legalMonth.value = String(now.getMonth() + 1);
+
+  populateSelect(
+    dom.legalActive,
+    Array.from({ length: 11 }, (_, i) => ({ value: i, label: String(i) }))
+  );
+}
+
+function setLegalStatus(message, kind = "muted") {
+  if (!dom.legalStatus) return;
+  dom.legalStatus.textContent = message;
+  dom.legalStatus.className = `callout ${kind}`;
+}
+
+async function submitLegalDetails(event) {
+  event.preventDefault();
+  if (!dom.legalYear || !dom.legalMonth || !dom.legalActive || !dom.closedLitigations) {
+    return;
+  }
+
+  const payload = {
+    year: Number(dom.legalYear.value),
+    month: Number(dom.legalMonth.value),
+    active_litigation: Number(dom.legalActive.value),
+    closed_litigations: dom.closedLitigations.value.trim(),
+  };
+
+  setLegalStatus("Saving legal details...", "muted");
+  try {
+    const response = await fetch("/api/legal-details", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const info = await response.json().catch(() => ({}));
+      const message = info.error || `Save failed (${response.status})`;
+      throw new Error(message);
+    }
+
+    const info = await response.json();
+    const savedPath = info.path || "server";
+    setLegalStatus(`Saved legal details to ${savedPath}.`, "success");
+  } catch (err) {
+    setLegalStatus(`Error saving legal details: ${err.message || err}`, "error");
+  }
+}
+
 async function selectMonth(item) {
   activeKey = keyFor(item);
   updateActiveCard(activeKey);
@@ -299,6 +411,10 @@ async function bootstrap() {
   setStatus("busy");
   dom.summaryContent.innerHTML = `<div class="placeholder">Looking for reports in ${dataRoot}...</div>`;
   try {
+    initNavigation();
+    seedLegalForm();
+    dom.legalForm?.addEventListener("submit", submitLegalDetails);
+    showView(activeView);
     months = await loadMonths();
     renderMonthList();
     if (months.length) {
