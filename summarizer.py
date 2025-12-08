@@ -20,11 +20,20 @@ def _extract_relevant_lines(markdown: str, keywords: Iterable[str], max_lines: i
     return "\n".join(selected)
 
 
-def build_summary_prompt(md_income: str, md_balance: str, period: str, trim: bool = True) -> Dict[str, str]:
+def build_summary_prompt(
+    md_income: str,
+    md_balance: str,
+    period: str,
+    *,
+    trim: bool = True,
+    legal_details: Optional[str] = None,
+) -> Dict[str, str]:
     """Construct a structured prompt for summarizing HOA financials.
 
     Assumes the Income Statement and Balance Sheet are aggregated by major category.
     HOA income comes primarily from a single annual assessment.
+    legal_details: Optional markdown from legal_details.md to embed in the prompt and
+        surface at the top of the Legal Spend Summary (requirement #8).
     """
 
     legal_keywords = ("legal", "attorney", "law", "counsel")
@@ -68,6 +77,7 @@ def build_summary_prompt(md_income: str, md_balance: str, period: str, trim: boo
         "7. Summarize monthly spend from `Total Reserve Expenditure`\n"
         "   - when there is no spend explicitly state no spending this month\n"
         "8. You must comment on legal fees and legal spend (or the absence of it).\n"
+        "   - If provided, include the contents of `legal_details.md` verbatim at the very top of this section before any additional analysis.\n"
         "   - Always place the **Legal Spend Summary** as the final section of the output.\n\n"
         "When referencing these specific lines, look for labels containing:\n"
         "- `Assessment Revenue`\n"
@@ -76,6 +86,15 @@ def build_summary_prompt(md_income: str, md_balance: str, period: str, trim: boo
         "- `Annual Budget`\n",
         "## Income Statement (Markdown, aggregated by major category)\n" + md_income,
     ]
+
+    if legal_details:
+        trimmed_legal_details = legal_details.strip()
+        if trimmed_legal_details:
+            user_parts.append(
+                "## Legal Details (verbatim from legal_details.md)\n"
+                "Place this verbatim block at the start of the Legal Spend Summary (requirement #8):\n"
+                + trimmed_legal_details
+            )
 
     if md_balance:
         user_parts.append(
@@ -93,6 +112,5 @@ def build_summary_prompt(md_income: str, md_balance: str, period: str, trim: boo
     user_msg = "\n\n".join(part for part in user_parts if part)
 
     return {"system": system_msg, "user": user_msg}
-
 
 

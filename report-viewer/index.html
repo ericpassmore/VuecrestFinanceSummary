@@ -22,7 +22,12 @@
       </div>
     </header>
 
-    <main class="layout">
+    <div class="view-switcher" role="tablist" aria-label="Viewer sections">
+      <button class="view-tab active" type="button" data-view="reports" aria-pressed="true">Reports</button>
+      <button class="view-tab" type="button" data-view="legal" aria-pressed="false">Legal Details</button>
+    </div>
+
+    <main id="reportView" class="layout">
       <aside class="sidebar">
         <div class="sidebar-header">
           <div>
@@ -48,6 +53,44 @@
         </article>
       </section>
     </main>
+
+    <section id="legalView" class="legal-view hidden" aria-label="Legal details entry">
+      <div class="form-card">
+        <div class="form-header">
+          <p class="eyebrow">Monthly context</p>
+          <h2>Legal Details</h2>
+          <p class="lede">Capture litigation counts and any markdown-style notes for the month.</p>
+        </div>
+        <form id="legalForm" class="legal-form">
+          <div class="form-grid">
+            <label class="field">
+              <span>Year</span>
+              <select id="legalYear" required></select>
+            </label>
+            <label class="field">
+              <span>Month</span>
+              <select id="legalMonth" required></select>
+            </label>
+            <label class="field">
+              <span>Current active litigation</span>
+              <select id="legalActive" required></select>
+            </label>
+          </div>
+          <label class="field">
+            <span>Closed litigations</span>
+            <textarea
+              id="closedLitigations"
+              rows="6"
+              placeholder="Add details in text or markdown (optional)"
+            ></textarea>
+          </label>
+          <div class="form-footer">
+            <button type="submit" class="primary">Save legal details</button>
+            <div id="legalStatus" class="callout muted">Nothing saved yet.</div>
+          </div>
+        </form>
+      </div>
+    </section>
 
     <template id="monthItemTemplate">
       <button class="month-card" type="button">

@@ -106,6 +106,40 @@ button.ghost:hover {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
+.view-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px 6px;
+}
+
+.view-tab {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.view-tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(123, 198, 255, 0.4);
+}
+
+.view-tab.active {
+  background: linear-gradient(135deg, rgba(72, 193, 167, 0.2), rgba(123, 198, 255, 0.16));
+  border-color: rgba(72, 193, 167, 0.6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+  display: none !important;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -306,6 +340,116 @@ button.ghost:hover {
   margin: 18px 0;
 }
 
+.legal-view {
+  padding: 10px 28px 48px;
+}
+
+.form-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  padding: 24px 22px;
+  max-width: 720px;
+}
+
+.form-header h2 {
+  margin-top: 6px;
+}
+
+.legal-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.field select,
+.field textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: var(--font);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: rgba(72, 193, 167, 0.6);
+  box-shadow: 0 0 0 3px rgba(72, 193, 167, 0.2);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.primary {
+  border-radius: 10px;
+  border: 1px solid rgba(72, 193, 167, 0.7);
+  background: linear-gradient(135deg, rgba(72, 193, 167, 0.9), rgba(123, 198, 255, 0.7));
+  color: #031022;
+  padding: 10px 16px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(72, 193, 167, 0.2);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px rgba(123, 198, 255, 0.28);
+}
+
+.callout {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+}
+
+.callout.muted {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.callout.success {
+  color: #0adab0;
+  border-color: rgba(10, 218, 176, 0.6);
+  background: rgba(10, 218, 176, 0.08);
+}
+
+.callout.error {
+  color: #ffb6b6;
+  border-color: rgba(255, 182, 182, 0.5);
+  background: rgba(255, 182, 182, 0.08);
+}
+
 .placeholder {
   color: var(--muted);
   text-align: center;
@@ -340,5 +484,9 @@ button.ghost:hover {
   .info-bar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .legal-view {
+    padding: 10px 18px 36px;
   }
 }
