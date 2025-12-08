@@ -36,26 +36,6 @@ def build_legal_markdown(year: int, month: int, active: int, closed: str) -> str
 # Application-specific imports / configuration
 # ---------------------------------------------------------------------------
 
-# You should define these in your application:
-#
-# ROOT_DIR: directory from which static assets are served
-# DATA_DIR: directory where legal details are written
-# get_api_base_url(): returns the base URL of the upstream API; e.g.
-#     - "https://example.com/vuecrest/"
-#     - "http://localhost:8086/"
-# build_legal_markdown(year, month, active, closed) -> str
-# save_legal_details(summary, year, month, base_dir) -> pathlib.Path
-#
-# Example placeholders:
-#
-# from pathlib import Path
-# ROOT_DIR = Path(__file__).parent / "static"
-# DATA_DIR = Path(__file__).parent / "data"
-# def get_api_base_url() -> str: ...
-# def build_legal_markdown(year: int, month: int, active: int, closed: str) -> str: ...
-# def save_legal_details(summary: str, year: int, month: int, base_dir) -> Path: ...
-
-
 class ViewerHandler(SimpleHTTPRequestHandler):
     """Serve the viewer assets and accept legal detail submissions."""
 
@@ -80,97 +60,6 @@ class ViewerHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(json.dumps(payload).encode("utf-8"))
-
-    def _full_api_url(self) -> str:
-        """
-        Combine API_BASE_URL with the incoming path to form an absolute URL.
-
-        This preserves the original path and query string, so a request to:
-
-            /api/legal-details?foo=bar
-
-        becomes:
-
-            <API_BASE_URL>/api/legal-details?foo=bar
-        """
-        base = get_api_base_url()
-        parsed = urlparse(self.path)
-
-        # Normalize base to look like a "directory" for urljoin
-        base_norm = base.rstrip("/") + "/"
-        upstream = urljoin(base_norm, parsed.path.lstrip("/"))
-
-        if parsed.query:
-            upstream = upstream + "?" + parsed.query
-
-        return upstream
-
-    def _is_self_url(self, target_url: str) -> bool:
-        """
-        Return True if target_url resolves to this same HTTP server.
-
-        This is used to avoid proxy loops when API_BASE_URL points
-        back at this process (e.g., http://localhost:8086/).
-        """
-        parsed = urlparse(target_url)
-
-        # What this HTTP server is actually bound to.
-        server_host, server_port = self.server.server_address  # type: ignore[attr-defined]
-
-        # server_host may be '' meaning "all interfaces"
-        if not server_host:
-            server_host = "localhost"
-
-        # parsed.netloc may be "host" or "host:port"
-        host, _, port_str = parsed.netloc.partition(":")
-        if not host:
-            # If no explicit host in the URL, treat as not self
-            return False
-
-        if port_str:
-            try:
-                port = int(port_str)
-            except ValueError:
-                return False
-        else:
-            # Default ports by scheme
-            if parsed.scheme == "https":
-                port = 443
-            else:
-                port = 80
-
-        # Consider localhost variants and the actual bind address as "self"
-        return host in ("localhost", "127.0.0.1", server_host) and port == server_port
-
-    def _proxy_post(self, target_url: str) -> None:
-        """Forward the POST body to the configured API_BASE_URL + path."""
-        content_length = int(self.headers.get("Content-Length", "0") or 0)
-        raw_body = self.rfile.read(content_length)
-
-        # Forward a minimal set of headers; extend as needed (Authorization, Cookie, etc.)
-        headers: Dict[str, str] = {}
-        if "Content-Type" in self.headers:
-            headers["Content-Type"] = self.headers["Content-Type"]
-
-        try:
-            resp = httpx.post(target_url, content=raw_body, headers=headers, timeout=10.0)
-        except Exception as exc:
-            self._respond_json(
-                502,
-                {
-                    "error": f"Upstream POST failed: {exc}",
-                    "target": target_url,
-                },
-            )
-            return
-
-        # Relay upstream status and body back to the client
-        self.send_response(resp.status_code)
-        self._set_cors()
-        content_type = resp.headers.get("Content-Type", "application/json")
-        self.send_header("Content-Type", content_type)
-        self.end_headers()
-        self.wfile.write(resp.content)
 
     # ------------------------------------------------------------------ #
     # HTTP method handlers
@@ -199,18 +88,9 @@ class ViewerHandler(SimpleHTTPRequestHandler):
         super().do_OPTIONS()
 
     def do_POST(self) -> None:
-        """
-        Route POSTs either to local handler or proxy to upstream API.
-        """
-        # Only handling one API endpoint for now.
         if self.path.rstrip("/") == "/api/legal-details":
-            target_url = self._full_api_url()
-
-            # Avoid proxy loops when API_BASE_URL points to this same server.
-            if self._is_self_url(target_url):
-                self._handle_legal_details()
-            else:
-                self._proxy_post(target_url)
+            # Always handle locally
+            self._handle_legal_details()
             return
 
         self.send_error(404, "Unknown endpoint")
