@@ -24,8 +24,7 @@ Browser automation captures PropVivo financial statements, saves HTML/table snap
 The viewer expects the data directory to be reachable at `/data`.
 
 - `cd report-viewer && ln -s ../data data` to expose the data folder at the server root.
-  - Option A (serve from repo root): `python -m http.server 8080` then open `http://localhost:8080/report-viewer/`.
-  - Option B (serve from the viewer folder) - `python -m http.server 8080 --directory report-viewer` then open `http://localhost:8080/`
+- Start the service: `python report-viewer/server.py 8080` then open `http://localhost:8080/`.
 
 ## Navigation (what you see in the UI)
 

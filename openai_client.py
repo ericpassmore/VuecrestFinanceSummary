@@ -19,10 +19,15 @@ def _client() -> OpenAI:
     return OpenAI(api_key=api_key)
 
 
-def summarize_financials(markdown_text: str, period: str, model: str = "gpt-4.1-mini") -> str:
+def summarize_financials(
+    markdown_text: str,
+    period: str,
+    model: str = "gpt-4.1-mini",
+    legal_details: Optional[str] = None,
+) -> str:
     """Send financial markdown to OpenAI and return the summary text."""
 
-    prompt = build_summary_prompt(markdown_text, "", period, trim=False)
+    prompt = build_summary_prompt(markdown_text, "", period, trim=False, legal_details=legal_details)
 
     client = _client()
     resp = client.chat.completions.create(

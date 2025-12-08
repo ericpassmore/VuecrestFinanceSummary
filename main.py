@@ -14,6 +14,7 @@ from openai_client import save_summary, summarize_financials
 from scraper import FinancialPageSnapshot, get_page_html, save_snapshot, snapshot_to_markdown
 from session import LoginError, create_browser, login
 from waits import wait_for_financial_table
+from legal_details import load_legal_details
 
 
 logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
@@ -52,9 +53,10 @@ async def run(headless: Optional[bool]) -> None:
         # Use period label from income (assume same for balance, but could compare).
         period_label = income_snapshot.period_label
         combined_md = f"Income Statement\n\n{income_md_info['markdown']}\n\nBalance Sheet\n\n{balance_md_info['markdown']}"
+        legal_details_md = load_legal_details(income_snapshot.year, income_snapshot.month)
 
         logger.info("Requesting summary for %s", period_label)
-        summary = summarize_financials(combined_md, period_label)
+        summary = summarize_financials(combined_md, period_label, legal_details=legal_details_md)
         out_path = save_summary(summary, period_label, income_snapshot.year, income_snapshot.month)
         logger.info("Saved summary to %s", out_path)
 
