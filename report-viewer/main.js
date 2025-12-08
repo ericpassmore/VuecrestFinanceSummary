@@ -1,5 +1,5 @@
 const dataRoot = "./data";
-const summaryCandidates = ["summary.md", "financial_summary.md"];
+const summaryCandidates = ["financial_summary.md"];
 const monthNames = [
   "January",
   "February",
@@ -350,7 +350,12 @@ function setLegalStatus(message, kind = "muted") {
 
 async function submitLegalDetails(event) {
   event.preventDefault();
-  if (!dom.legalYear || !dom.legalMonth || !dom.legalActive || !dom.closedLitigations) {
+  if (
+    !dom.legalYear ||
+    !dom.legalMonth ||
+    !dom.legalActive ||
+    !dom.closedLitigations
+  ) {
     return;
   }
 
@@ -363,7 +368,7 @@ async function submitLegalDetails(event) {
 
   setLegalStatus("Saving legal details...", "muted");
   try {
-    const response = await fetch("/api/legal-details", {
+    const response = await fetch("api/legal-details", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -379,7 +384,10 @@ async function submitLegalDetails(event) {
     const savedPath = info.path || "server";
     setLegalStatus(`Saved legal details to ${savedPath}.`, "success");
   } catch (err) {
-    setLegalStatus(`Error saving legal details: ${err.message || err}`, "error");
+    setLegalStatus(
+      `Error saving legal details: ${err.message || err}`,
+      "error"
+    );
   }
 }
 

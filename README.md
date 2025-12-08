@@ -11,7 +11,7 @@ Browser automation captures PropVivo financial statements, saves HTML/table snap
 - Install Playwright browsers: `python3 -m playwright install`
 - Copy `/.env.example` to `/.env` and set credentials:
   - Required: `PROP_VIVO_USERNAME`, `PROP_VIVO_PASSWORD`
-  - Optional: `OPENAI_API_KEY` (needed for summaries), `OUTPUT_DIR`, `HEADLESS`
+  - Optional: `OPENAI_API_KEY` (needed for summaries), `API_BASE_URL` (defaults to `http://localhost:8080` for API calls), `OUTPUT_DIR`, `HEADLESS`
 
 ## Summary Generation
 

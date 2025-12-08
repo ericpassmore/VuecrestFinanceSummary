@@ -18,6 +18,7 @@ _KNOWN_KEYS = {
     "PROP_VIVO_USERNAME",
     "PROP_VIVO_PASSWORD",
     "OPENAI_API_KEY",
+    "API_BASE_URL",
     "OUTPUT_DIR",
     "HEADLESS",
 }
@@ -100,6 +101,31 @@ def get_openai_api_key() -> Optional[str]:
     """Return the optional OpenAI API key."""
 
     return _CONFIG.get("OPENAI_API_KEY")
+
+
+def _ensure_scheme(url: str) -> str:
+    """Normalize the base URL to include a scheme and drop trailing slashes."""
+
+    cleaned = url.strip().rstrip("/")
+    if not cleaned:
+        return cleaned
+    if not cleaned.startswith(("http://", "https://")):
+        return f"http://{cleaned}"
+    return cleaned
+
+
+def get_api_base_url(default_port: int | str = 8080) -> str:
+    """Return the base URL used for outbound API calls.
+
+    Falls back to localhost with the provided port when nothing is configured.
+    """
+
+    raw = _CONFIG.get("API_BASE_URL")
+    if raw:
+        return _ensure_scheme(raw)
+
+    port = str(default_port).lstrip(":")
+    return f"http://localhost:{port}"
 
 
 def get_output_dir(default: str = "output") -> Path:
